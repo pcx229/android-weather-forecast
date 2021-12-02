@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <import type="com.weather.Common"/>
+        <import type="android.view.View"/>
+        <variable name="weatherForecast" type="com.weather.data.WeatherForecast"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".EditWeatherForecast"
+        android:visibility="@{weatherForecast != null ? View.VISIBLE : View.GONE}">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/Theme.Weather.NoActionBar">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:minHeight="?actionBarSize"
+                android:padding="@dimen/appbar_padding"
+                android:text='@{weatherForecast.id != 0 ? "Edit Weather Forecast" : "Add Weather Forecast"}'
+                android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location id" />
+
+                <EditText
+                    android:id="@+id/LocationIdEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="@={Common.IntConverter.intToString(weatherForecast.locationId)}" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="From time(DD/MM/YYYY HH:MM)" />
+
+                <EditText
+                    android:id="@+id/FromTimeEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="datetime"
+                    android:text="@={Common.DateConverter.dateToString(weatherForecast.fromForecastTime)}" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="To time(DD/MM/YYYY HH:MM)" />
+
+                <EditText
+                    android:id="@+id/ToTimeEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="datetime"
+                    android:text="@={Common.DateConverter.dateToString(weatherForecast.toForecastTime)}" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Temperature(Celsius)" />
+
+                <EditText
+                    android:id="@+id/TemperatureEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:text="@={Common.FloatConverter.floatToString(weatherForecast.temperature)}" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="min" />
+
+                    <EditText
+                        android:id="@+id/MinTemperatureEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="numberDecimal"
+                        android:text="@={Common.FloatConverter.floatToString(weatherForecast.minTemperature)}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="max" />
+
+                    <EditText
+                        android:id="@+id/MaxTemperatureEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="numberDecimal"
+                        android:text="@={Common.FloatConverter.floatToString(weatherForecast.maxTemperature)}" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Humidity(%)" />
+
+                <EditText
+                    android:id="@+id/HumidityEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:text="@={Common.FloatConverter.floatToString(weatherForecast.humidity)}" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="min" />
+
+                    <EditText
+                        android:id="@+id/MinHumidityEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="numberDecimal"
+                        android:text="@={Common.FloatConverter.floatToString(weatherForecast.minHumidity)}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="max" />
+
+                    <EditText
+                        android:id="@+id/MaxHumidityEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="numberDecimal"
+                        android:text="@={Common.FloatConverter.floatToString(weatherForecast.maxHumidity)}" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Wind Speed(kmh)" />
+
+                <EditText
+                    android:id="@+id/WindSpeedEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:text="@={Common.FloatConverter.floatToString(weatherForecast.windSpeed)}" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Wind Direction(degree)" />
+
+                <EditText
+                    android:id="@+id/WindDirectionEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:text="@={Common.FloatConverter.floatToString(weatherForecast.windDirection)}" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rain(ml)" />
+
+                <EditText
+                    android:id="@+id/RainEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:text="@={Common.FloatConverter.floatToString(weatherForecast.rainFall)}" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Weather Code" />
+
+                <EditText
+                    android:id="@+id/WeatherCodeEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="@={Common.IntConverter.intToString(weatherForecast.weatherCode)}" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{weatherForecast.id != 0 ? View.VISIBLE : View.GONE}"
+                    android:text='@{"id: " + weatherForecast.id }' />
+
+                <Button
+                    android:id="@+id/SaveButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{weatherForecast.id == 0 ? View.VISIBLE : View.GONE}"
+                    android:text="Save"
+                    android:onClick="save" />
+
+                <Button
+                    android:id="@+id/UpdateButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{weatherForecast.id != 0 ? View.VISIBLE : View.GONE}"
+                    android:text="Update"
+                    android:onClick="update" />
+
+                <Button
+                    android:id="@+id/DeleteButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{weatherForecast.id != 0 ? View.VISIBLE : View.GONE}"
+                    android:text="Delete"
+                    android:onClick="delete" />
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+</layout>

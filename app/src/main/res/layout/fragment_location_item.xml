@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable name="location" type="com.weather.data.Location"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="15dp"
+            app:srcCompat="@drawable/ic_baseline_location_on_24" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="5dp"
+            android:paddingEnd="5dp">
+
+            <TextView
+                android:id="@+id/NameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='@{"name: " + location.name}' />
+
+            <TextView
+                android:id="@+id/LatitudeLongitudeTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='@{"(latitude, longitude) = (" + location.lat + ", " + location.lon + ")"}' />
+
+            <TextView
+                android:id="@+id/AltitudeTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='@{"altitude: " + location.height}' />
+
+            <TextView
+                android:id="@+id/LocationIdTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='@{"id: " + location.id}' />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

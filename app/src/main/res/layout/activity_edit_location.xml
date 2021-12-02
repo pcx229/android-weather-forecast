@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <import type="com.weather.Common"/>
+        <import type="android.view.View"/>
+        <variable name="location" type="com.weather.data.Location"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".EditLocation"
+        android:visibility="@{location != null ? View.VISIBLE : View.GONE}">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/Theme.Weather.NoActionBar">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:minHeight="?actionBarSize"
+                android:padding="@dimen/appbar_padding"
+                android:text='@{location.id != 0 ? "Edit Location" : "Add Location"}'
+                android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name" />
+
+            <EditText
+                android:id="@+id/NameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:text="@={location.name}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Latitude" />
+
+            <EditText
+                android:id="@+id/LatitudeEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:text="@={Common.FloatConverter.floatToString(location.lat)}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Longitude" />
+
+            <EditText
+                android:id="@+id/LongitudeEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:text="@={Common.FloatConverter.floatToString(location.lon)}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Altitude" />
+
+            <EditText
+                android:id="@+id/AltitudeEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:text="@={Common.FloatConverter.floatToString(location.height)}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{location.id != 0 ? View.VISIBLE : View.GONE}"
+                android:text='@{"id: " + location.id }' />
+
+            <Button
+                android:id="@+id/SaveButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="@{location.id == 0 ? View.VISIBLE : View.GONE}"
+                android:text="Save"
+                android:onClick="save" />
+
+            <Button
+                android:id="@+id/UpdateButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="@{location.id != 0 ? View.VISIBLE : View.GONE}"
+                android:text="Update"
+                android:onClick="update" />
+
+            <Button
+                android:id="@+id/DeleteButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="@{location.id != 0 ? View.VISIBLE : View.GONE}"
+                android:text="Delete"
+                android:onClick="delete" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</layout>

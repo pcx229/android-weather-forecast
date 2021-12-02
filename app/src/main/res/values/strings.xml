@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Weather</string>
+    <string name="title_activity_import">Import</string>
+    <string name="tab_text_locations_activity_import">Locations</string>
+    <string name="tab_text_weather_forecast_activity_import">Weather Forecast</string>
+    <string name="title_activity_edit_location">Edit Location</string>
+    <string name="title_activity_edit_weather_forecast">Edit Weather Forecast</string>
+</resources>

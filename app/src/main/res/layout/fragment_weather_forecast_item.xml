@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <import type="com.weather.Common"/>
+        <variable name="weatherForecast" type="com.weather.data.WeatherForecast"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingEnd="5dp">
+
+        <com.github.pwittchen.weathericonview.WeatherIconView
+            android:id="@+id/WeatherCodeIconImageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:weatherIconColor="@android:color/black"
+            app:weatherIconResource="@{Common.getWeatherIconFromCode(weatherForecast.weatherCode)}"
+            app:weatherIconSize="30" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="5dp"
+            android:paddingEnd="5dp">
+
+            <TextView
+                android:id="@+id/LocationIdTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='@{"location id: " + weatherForecast.locationId}' />
+
+            <TextView
+                android:id="@+id/FromTimeTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='@{"time from: " + Common.getDateAsString(weatherForecast.fromForecastTime)}' />
+
+            <TextView
+                android:id="@+id/ToTimeTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='@{"         to:      " + Common.getDateAsString(weatherForecast.toForecastTime)}' />
+
+            <TextView
+                android:id="@+id/TemperatureTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='@{"temperature: " + weatherForecast.temperature + "  (" + weatherForecast.minTemperature + " - " + weatherForecast.maxTemperature + ")"}' />
+
+            <TextView
+                android:id="@+id/HumidityTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='@{"humidity: " + weatherForecast.humidity + "(" + weatherForecast.minHumidity + " - " + weatherForecast.maxHumidity + ")"}' />
+
+            <TextView
+                android:id="@+id/WindSpeedTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='@{"wind speed: " + weatherForecast.windSpeed}' />
+
+            <TextView
+                android:id="@+id/WindDirectionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='@{"         direction: " + weatherForecast.windDirection}' />
+
+            <TextView
+                android:id="@+id/RainFallTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='@{"rain: " + weatherForecast.rainFall}' />
+        </LinearLayout>
+    </LinearLayout>
+</layout>
