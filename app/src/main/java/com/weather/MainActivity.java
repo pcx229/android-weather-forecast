@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private ListView WeeklyForecastList;
+    private ArrayAdapter<WeatherForecast> WeeklyForecastListAdapter;
 
     @Override
     protected void onStart() {
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
             weekly = _weekly;
             binding.setWeekly(weekly);
             binding.invalidateAll();
+            WeeklyForecastListAdapter.notifyDataSetChanged();
             WeeklyForecastList.invalidate();
         });
 
@@ -106,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         binding.setWeekly(null);
 
         WeeklyForecastList = findViewById(R.id.WeeklyForecastList);
-        WeeklyForecastList.setAdapter(new ArrayAdapter<WeatherForecast>(this, R.layout.weekly_forecast_list_item) {
+        WeeklyForecastListAdapter = new ArrayAdapter<WeatherForecast>(this, R.layout.weekly_forecast_list_item) {
 
             @Override
             public int getCount() {
@@ -131,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
                 binding.setWeekDay(getItem(position));
                 return binding.getRoot();
             }
-        });
+        };
+        WeeklyForecastList.setAdapter(WeeklyForecastListAdapter);
     }
 
     private void resetView() {
