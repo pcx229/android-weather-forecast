@@ -1,10 +1,14 @@
 package com.weather.data;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.weather.ImportActivity;
+
+import java.io.File;
 import java.util.List;
 
 public class WeatherForecastViewModel extends AndroidViewModel {
@@ -87,5 +91,9 @@ public class WeatherForecastViewModel extends AndroidViewModel {
 
     public void clearAllData() {
         mRepository.clearAllData();
+    }
+
+    public void importFromDBFile(File database) {
+        mRepository.importFromDBFile(database);
     }
 }

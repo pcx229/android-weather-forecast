@@ -9,6 +9,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import java.io.File;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,7 +20,10 @@ public abstract class WeatherForecastDatabase extends RoomDatabase {
 
     public static final String DB_WEATHER_FORECAST_NAME = "weather_forecast";
 
+    public static final String DB_WEATHER_FORECAST_IMPORT_NAME = "weather_forecast_import";
+
     private static WeatherForecastDatabase instance;
+    private static Builder<WeatherForecastDatabase> importInstance;
     private static final int NUMBER_OF_THREADS = 4;
     static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
@@ -58,12 +62,17 @@ public abstract class WeatherForecastDatabase extends RoomDatabase {
         }
     };
 
+    public static synchronized WeatherForecastDatabase getImportInstance(File imported) {
+        return importInstance.createFromAsset(imported.getAbsolutePath()).build();
+    }
+
     public static synchronized WeatherForecastDatabase getInstance(Context context) {
         if(instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(), WeatherForecastDatabase.class, DB_WEATHER_FORECAST_NAME)
                     .fallbackToDestructiveMigration()
                     .addCallback(sRoomTestDataDatabaseCallback)
                     .build();
+            importInstance = Room.databaseBuilder(context.getApplicationContext(), WeatherForecastDatabase.class, DB_WEATHER_FORECAST_IMPORT_NAME);
         }
         return instance;
     }

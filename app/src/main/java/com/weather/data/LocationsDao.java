@@ -11,10 +11,10 @@ import java.util.List;
 
 @Dao
 public interface LocationsDao {
-    @Query("SELECT * FROM location")
+    @Query("SELECT * FROM location ORDER BY name ASC")
     LiveData<List<Location>> getAll();
 
-    @Query("SELECT * FROM location")
+    @Query("SELECT * FROM location ORDER BY name ASC")
     List<Location> _getAll();
 
     @Query("SELECT * FROM location WHERE id IN (:ids)")

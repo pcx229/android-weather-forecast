@@ -32,9 +32,13 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WeatherForecastRepository {
+    private WeatherForecastDatabase db;
     private LocationsDao mLocationsDao;
     private WeatherForecastDao mWeatherForecastDao;
     private SharedPreferences sharedPref;
@@ -42,7 +46,7 @@ public class WeatherForecastRepository {
     private MutableLiveData<Location> mLocation = new MutableLiveData<>();
 
     public WeatherForecastRepository(Application application) {
-        WeatherForecastDatabase db = WeatherForecastDatabase.getInstance(application);
+        db = WeatherForecastDatabase.getInstance(application);
         mLocationsDao = db.locationsDao();
         mWeatherForecastDao = db.weatherForecastDao();
         sharedPref = application.getSharedPreferences("WeatherForecast" , Context.MODE_PRIVATE);
@@ -162,5 +166,33 @@ public class WeatherForecastRepository {
             mWeatherForecastDao.deleteAll();
         });
         clearLocation();
+    }
+
+    public void importFromDBFile(File database) {
+        WeatherForecastDatabase.databaseWriteExecutor.execute(() -> {
+            WeatherForecastDatabase temp_db = db.getImportInstance(database);
+            List<Location> locations = temp_db.locationsDao()._getAll();
+            List<WeatherForecast> weatherForecasts = temp_db.weatherForecastDao()._getAll();
+            Map<Integer, List<WeatherForecast>> locationWeatherForecast = new HashMap<>();
+            for(Location l : locations) {
+                locationWeatherForecast.put(l.id, new ArrayList<>());
+            }
+            for(WeatherForecast w : weatherForecasts) {
+                w.id = 0;
+                locationWeatherForecast.get(w.locationId).add(w);
+            }
+            long[] ids;
+            for(Location l : locations) {
+                int last_id = l.id;
+                l.id = 0;
+                ids = mLocationsDao.insert(l);
+                for(WeatherForecast w : locationWeatherForecast.get(last_id)) {
+                    w.locationId = (int) ids[0];
+                }
+            }
+            mWeatherForecastDao.insert(weatherForecasts.toArray(new WeatherForecast[weatherForecasts.size()]));
+            temp_db.close();
+            database.delete();
+        });
     }
 }

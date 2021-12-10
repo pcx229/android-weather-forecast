@@ -28,6 +28,14 @@
                 android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
 
             <ImageButton
+                android:id="@+id/ExportDatabaseImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:onClick="importAndExport"
+                app:srcCompat="@drawable/ic_baseline_import_export_24" />
+
+            <ImageButton
                 android:id="@+id/DeleteAllImageButton"
                 android:layout_width="50dp"
                 android:layout_height="50dp"

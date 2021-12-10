@@ -31,6 +31,9 @@ class XMLWeatherForecastParser {
 
     public static final String url = "https://ims.gov.il/sites/default/files/ims_data/xml_files/isr_cities_1week_6hr_forecast.xml";
 
+    public static final String XML_FORECAST_IMPORT_FILE_PREFIX = "XML_Weather_Forecast_",
+                                XML_FORECAST_IMPORT_FILE_SUFFIX =  ".xml";
+
     private static final String ns = null;
 
     public static class Entry {
@@ -43,18 +46,21 @@ class XMLWeatherForecastParser {
         }
     }
 
-    private File xmlWeatherForecastOutput;
+    private File cashFolder;
 
     public XMLWeatherForecastParser(Application application) {
-        try {
-            xmlWeatherForecastOutput = File.createTempFile("XML_Weather_Forecast_", ".xml", application.getExternalCacheDir());
-        } catch (IOException e) {
-            e.printStackTrace();
+        cashFolder = application.getExternalCacheDir();
+        // clear previews forecasts saved
+        for (File f : cashFolder.listFiles()) {
+            if(f.isFile() && f.getName().endsWith(XML_FORECAST_IMPORT_FILE_SUFFIX) && f.getName().startsWith(XML_FORECAST_IMPORT_FILE_PREFIX)) {
+                f.delete();
+            }
         }
     }
 
     public List<Entry> getWeatherInformationFromTheWeb() {
         try {
+            File xmlWeatherForecastOutput = File.createTempFile(XML_FORECAST_IMPORT_FILE_PREFIX, XML_FORECAST_IMPORT_FILE_SUFFIX, cashFolder);
             Log.d(TAG, "downloading weather forecast data from the web...");
             downloadFile(url, xmlWeatherForecastOutput);
             Log.d(TAG, "parsing weather forecast data");
@@ -66,6 +72,7 @@ class XMLWeatherForecastParser {
             List<XMLWeatherForecastParser.Entry> data = readLocationForecasts(parser);
             Log.d(TAG, "number of location found: " + data.size());
             in.close();
+            xmlWeatherForecastOutput.delete();
             return data;
         } catch (XmlPullParserException | IOException | ParseException e) {
             e.printStackTrace();
