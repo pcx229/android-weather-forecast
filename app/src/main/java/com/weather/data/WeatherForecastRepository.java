@@ -144,9 +144,6 @@ public class WeatherForecastRepository {
 
     public void importDataFromTheWeb() {
         WeatherForecastDatabase.databaseWriteExecutor.execute(() -> {
-            mLocationsDao.deleteAll();
-            mWeatherForecastDao.deleteAll();
-            clearLocation();
             List<XMLWeatherForecastParser.Entry> data = webContent.getWeatherInformationFromTheWeb();
             if(data != null) {
                 for(XMLWeatherForecastParser.Entry i : data) {

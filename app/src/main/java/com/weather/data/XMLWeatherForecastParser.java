@@ -67,7 +67,7 @@ class XMLWeatherForecastParser {
             InputStream in = new FileInputStream(xmlWeatherForecastOutput);
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-            parser.setInput(in, null);
+            parser.setInput(in, "utf-8");
             parser.nextTag();
             List<XMLWeatherForecastParser.Entry> data = readLocationForecasts(parser);
             Log.d(TAG, "number of location found: " + data.size());

@@ -98,7 +98,7 @@ public class ImportActivity extends AppCompatActivity {
 
     public void importFromWeb(View view) {
         new AlertDialog.Builder(this)
-                .setMessage("Are you sure you want to delete all forecasts and import from ims.gov.il the updated forecasts?")
+                .setMessage("Are you sure you want to import from ims.gov.il ?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Snackbar.make(findViewById(android.R.id.content), "wait while loading weather forecast data from the web....", Snackbar.LENGTH_LONG).show();
