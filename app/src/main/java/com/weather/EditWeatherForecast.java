@@ -1,31 +1,22 @@
 package com.weather;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.DatePicker;
-import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.weather.data.Location;
 import com.weather.data.WeatherForecast;
-import com.weather.data.WeatherForecastViewModel;
-import com.weather.databinding.ActivityEditLocationBinding;
+import com.weather.data.ImportActivityViewModel;
 import com.weather.databinding.ActivityEditWeatherForecastBinding;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
 
 public class EditWeatherForecast extends AppCompatActivity {
 
     private WeatherForecast weatherForecast;
 
-    private WeatherForecastViewModel mWeatherForecastViewModel;
+    private ImportActivityViewModel mImportActivityViewModel;
 
     private ActivityEditWeatherForecastBinding binding;
 
@@ -34,7 +25,7 @@ public class EditWeatherForecast extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_weather_forecast);
 
-        mWeatherForecastViewModel = new ViewModelProvider(this).get(WeatherForecastViewModel.class);
+        mImportActivityViewModel = new ViewModelProvider(this).get(ImportActivityViewModel.class);
 
         int id = -1;
         Intent intent = getIntent();
@@ -44,7 +35,7 @@ public class EditWeatherForecast extends AppCompatActivity {
             id = savedInstanceState.getInt("id", -1);
         }
         if(id != -1) {
-            mWeatherForecastViewModel.getWeatherForecastById(id).observe(this, _weatherForecast -> {
+            mImportActivityViewModel.getWeatherForecastById(id).observe(this, _weatherForecast -> {
                 if(_weatherForecast != null) {
                     weatherForecast = _weatherForecast;
                     binding.setWeatherForecast(weatherForecast);
@@ -68,17 +59,17 @@ public class EditWeatherForecast extends AppCompatActivity {
     }
 
     public void save(View view) {
-        mWeatherForecastViewModel.insertWeatherForecasts(weatherForecast);
+        mImportActivityViewModel.insertWeatherForecasts(weatherForecast);
         finish();
     }
 
     public void update(View view) {
-        mWeatherForecastViewModel.updateWeatherForecasts(weatherForecast);
+        mImportActivityViewModel.updateWeatherForecasts(weatherForecast);
         finish();
     }
 
     public void delete(View view) {
-        mWeatherForecastViewModel.deleteWeatherForecasts(weatherForecast);
+        mImportActivityViewModel.deleteWeatherForecasts(weatherForecast);
         finish();
     }
 }

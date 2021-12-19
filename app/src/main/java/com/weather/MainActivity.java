@@ -29,8 +29,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.weather.data.Location;
+import com.weather.data.MainActivityViewModel;
 import com.weather.data.WeatherForecast;
-import com.weather.data.WeatherForecastViewModel;
+import com.weather.data.MainActivityViewModel;
 import com.weather.databinding.ActivityMainBinding;
 import com.weather.databinding.WeeklyForecastListItemBinding;
 
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int selectedLocation;
 
-    private WeatherForecastViewModel mWeatherForecastViewModel;
+    private MainActivityViewModel mMainActivityViewModel;
 
     private ActivityMainBinding binding;
     private ListView WeeklyForecastList;
@@ -56,10 +57,12 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationManager mLocationManager;
 
+    private Snackbar loadingGPSLocationDataProgressSnackbar;
+
     @Override
     protected void onStart() {
         super.onStart();
-        mWeatherForecastViewModel.updateLocation();
+        mMainActivityViewModel.updateLocation();
     }
 
     @Override
@@ -68,9 +71,9 @@ public class MainActivity extends AppCompatActivity {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        mWeatherForecastViewModel = new ViewModelProvider(this).get(WeatherForecastViewModel.class);
+        mMainActivityViewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
-        mWeatherForecastViewModel.getAllLocations().observe(this, locations -> {
+        mMainActivityViewModel.getAllLocations().observe(this, locations -> {
             if (locations != null) {
                 Log.d(TAG, "number of locations " + locations.size());
             } else {
@@ -79,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.this.locations = locations;
         });
 
-        mWeatherForecastViewModel.getLocation().observe(this, _location -> {
+        mMainActivityViewModel.getLocation().observe(this, _location -> {
             if (_location != null) {
                 Log.d(TAG, "saved location id " + _location.id);
             } else {
@@ -90,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             binding.invalidateAll();
         });
 
-        mWeatherForecastViewModel.getDailyWeatherForecast().observe(this, _daily -> {
+        mMainActivityViewModel.getDailyWeatherForecast().observe(this, _daily -> {
             if (_daily != null) {
                 Log.d(TAG, "daily forecast available " + _daily.id);
             } else {
@@ -101,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             binding.invalidateAll();
         });
 
-        mWeatherForecastViewModel.getWeeklyWeatherForecast().observe(this, _weekly -> {
+        mMainActivityViewModel.getWeeklyWeatherForecast().observe(this, _weekly -> {
             if (_weekly != null) {
                 Log.d(TAG, "weekly forecast available " + _weekly.size());
             } else {
@@ -149,6 +152,8 @@ public class MainActivity extends AppCompatActivity {
         WeeklyForecastList.setAdapter(WeeklyForecastListAdapter);
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        loadingGPSLocationDataProgressSnackbar = Snackbar.make(findViewById(android.R.id.content), "wait while finding your location....", Snackbar.LENGTH_INDEFINITE);
     }
 
     private void resetView() {
@@ -215,10 +220,11 @@ public class MainActivity extends AppCompatActivity {
                     smallestDistanceLocation = l;
                 }
             }
+            loadingGPSLocationDataProgressSnackbar.dismiss();
             if(smallestDistanceLocation != null) {
                 if(smallestDistance < MAX_DISTANCE_FROM_LOCATION) {
                     resetView();
-                    mWeatherForecastViewModel.setLocationId(smallestDistanceLocation.id);
+                    mMainActivityViewModel.setLocationId(smallestDistanceLocation.id);
                     Toast.makeText(MainActivity.this, "location was set to \"" + smallestDistanceLocation.name + "\"", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(MainActivity.this, "your location is too far from any known locations", Toast.LENGTH_LONG).show();
@@ -262,15 +268,15 @@ public class MainActivity extends AppCompatActivity {
         changeLocationDialog.setIcon(R.drawable.ic_baseline_edit_location_alt_24);
         changeLocationDialog.setTitle("Change your location");
 
-        changeLocationDialog.setSingleChoiceItems(Location.getAsStringArray(locations), getLocationIndexById(mWeatherForecastViewModel.getLocationId()), (dialog, which) -> {
+        changeLocationDialog.setSingleChoiceItems(Location.getAsStringArray(locations), getLocationIndexById(mMainActivityViewModel.getLocationId()), (dialog, which) -> {
             selectedLocation = which;
         });
         changeLocationDialog.setPositiveButton("OK", (dialog, which) -> {
             resetView();
-            mWeatherForecastViewModel.setLocationId(getLocationIdByIndex(selectedLocation));
+            mMainActivityViewModel.setLocationId(getLocationIdByIndex(selectedLocation));
         });
         changeLocationDialog.setNeutralButton("USE GPS", (dialog, which) -> {
-            Snackbar.make(findViewById(android.R.id.content), "wait while finding your location....", Snackbar.LENGTH_LONG).show();
+            loadingGPSLocationDataProgressSnackbar.show();
             requestGPSLocation();
         });
         changeLocationDialog.setNegativeButton("CANCEL", null);

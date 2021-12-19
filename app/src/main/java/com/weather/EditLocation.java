@@ -9,14 +9,14 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.weather.data.Location;
-import com.weather.data.WeatherForecastViewModel;
+import com.weather.data.ImportActivityViewModel;
 import com.weather.databinding.ActivityEditLocationBinding;
 
 public class EditLocation extends AppCompatActivity {
 
     private Location location;
 
-    private WeatherForecastViewModel mWeatherForecastViewModel;
+    private ImportActivityViewModel mImportActivityViewModel;
 
     private ActivityEditLocationBinding binding;
 
@@ -25,7 +25,7 @@ public class EditLocation extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_location);
 
-        mWeatherForecastViewModel = new ViewModelProvider(this).get(WeatherForecastViewModel.class);
+        mImportActivityViewModel = new ViewModelProvider(this).get(ImportActivityViewModel.class);
 
         int id = -1;
         Intent intent = getIntent();
@@ -35,7 +35,7 @@ public class EditLocation extends AppCompatActivity {
             id = savedInstanceState.getInt("id", -1);
         }
         if(id != -1) {
-            mWeatherForecastViewModel.getLocationById(id).observe(this, _location -> {
+            mImportActivityViewModel.getLocationById(id).observe(this, _location -> {
                 if(_location != null) {
                     location = _location;
                     binding.setLocation(location);
@@ -59,17 +59,17 @@ public class EditLocation extends AppCompatActivity {
     }
 
     public void save(View view) {
-        mWeatherForecastViewModel.insertLocations(location);
+        mImportActivityViewModel.insertLocations(location);
         finish();
     }
 
     public void update(View view) {
-        mWeatherForecastViewModel.updateLocations(location);
+        mImportActivityViewModel.updateLocations(location);
         finish();
     }
 
     public void delete(View view) {
-        mWeatherForecastViewModel.deleteLocations(location);
+        mImportActivityViewModel.deleteLocations(location);
         finish();
     }
 }

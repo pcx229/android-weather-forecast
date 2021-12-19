@@ -15,13 +15,10 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.weather.data.Location;
-import com.weather.data.WeatherForecastViewModel;
+import com.weather.data.ImportActivityViewModel;
 import com.weather.databinding.FragmentLocationItemBinding;
-import com.weather.databinding.WeeklyForecastListItemBinding;
 
 import java.util.List;
 
@@ -33,7 +30,7 @@ public class LocationsFragment extends Fragment {
     private ListView locationsListView;
     private ArrayAdapter<Location> locationListAdapter;
 
-    private WeatherForecastViewModel mWeatherForecastViewModel;
+    private ImportActivityViewModel mImportActivityViewModel;
 
     public LocationsFragment() {
 
@@ -48,7 +45,7 @@ public class LocationsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mWeatherForecastViewModel = new ViewModelProvider(this).get(WeatherForecastViewModel.class);
+        mImportActivityViewModel = new ViewModelProvider(this).get(ImportActivityViewModel.class);
     }
 
     @Override
@@ -90,7 +87,7 @@ public class LocationsFragment extends Fragment {
             }
         });
 
-        mWeatherForecastViewModel.getAllLocations().observe(getActivity(), locations -> {
+        mImportActivityViewModel.getAllLocations().observe(getActivity(), locations -> {
             if(locations != null) {
                 Log.d(TAG, "number of locations " + locations.size());
             } else {

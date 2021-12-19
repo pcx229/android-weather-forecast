@@ -15,13 +15,9 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.weather.data.Location;
 import com.weather.data.WeatherForecast;
-import com.weather.data.WeatherForecastViewModel;
-import com.weather.databinding.FragmentLocationItemBinding;
+import com.weather.data.ImportActivityViewModel;
 import com.weather.databinding.FragmentWeatherForecastItemBinding;
 
 import java.util.List;
@@ -34,7 +30,7 @@ public class WeatherForecastFragment extends Fragment {
     private ListView weatherForecastListView;
     private ArrayAdapter<WeatherForecast> weatherForecastListAdapter;
 
-    private WeatherForecastViewModel mWeatherForecastViewModel;
+    private ImportActivityViewModel mImportActivityViewModel;
 
     public WeatherForecastFragment() {
 
@@ -49,7 +45,7 @@ public class WeatherForecastFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mWeatherForecastViewModel = new ViewModelProvider(this).get(WeatherForecastViewModel.class);
+        mImportActivityViewModel = new ViewModelProvider(this).get(ImportActivityViewModel.class);
     }
 
     @Override
@@ -91,7 +87,7 @@ public class WeatherForecastFragment extends Fragment {
             }
         });
 
-        mWeatherForecastViewModel.getAllWeatherForecasts().observe(getActivity(), weatherForecasts -> {
+        mImportActivityViewModel.getAllWeatherForecasts().observe(getActivity(), weatherForecasts -> {
             if(weatherForecasts != null) {
                 Log.d(TAG, "number of weather forecasts " + weatherForecasts.size());
             } else {

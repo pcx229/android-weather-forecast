@@ -11,11 +11,11 @@ import com.weather.ImportActivity;
 import java.io.File;
 import java.util.List;
 
-public class WeatherForecastViewModel extends AndroidViewModel {
+public class ImportActivityViewModel extends AndroidViewModel {
 
     private WeatherForecastRepository mRepository;
 
-    public WeatherForecastViewModel(Application application) {
+    public ImportActivityViewModel(Application application) {
         super(application);
         mRepository = new WeatherForecastRepository(application);
     }
@@ -28,23 +28,6 @@ public class WeatherForecastViewModel extends AndroidViewModel {
         return mRepository.getLocationById(id);
     }
 
-    public LiveData<Location> getLocation() {
-        return mRepository.getLocation();
-    }
-
-    public void updateLocation() {
-        mRepository.updateLocation();
-    }
-
-
-    public void setLocationId(int id) {
-        mRepository.setLocationId(id);
-    }
-
-    public int getLocationId() {
-        return mRepository.getLocationId();
-    }
-
     public void insertLocations(Location... locations) {
         mRepository.insertLocations(locations);
     }
@@ -55,14 +38,6 @@ public class WeatherForecastViewModel extends AndroidViewModel {
 
     public void deleteLocations(Location... locations) {
         mRepository.deleteLocations(locations);
-    }
-
-    public LiveData<WeatherForecast> getDailyWeatherForecast() {
-        return mRepository.getDailyWeatherForecast();
-    }
-
-    public LiveData<List<WeatherForecast>> getWeeklyWeatherForecast() {
-        return mRepository.getWeeklyWeatherForecast();
     }
 
     public LiveData<List<WeatherForecast>> getAllWeatherForecasts() {
@@ -87,6 +62,10 @@ public class WeatherForecastViewModel extends AndroidViewModel {
 
     public void importDataFromTheWeb() {
         mRepository.importDataFromTheWeb();
+    }
+
+    public LiveData<WeatherForecastRepository.StateData<Integer>> importDataFromTheWebResponse() {
+        return mRepository.importDataFromTheWebResponse();
     }
 
     public void clearAllData() {

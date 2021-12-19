@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.util.Xml;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -44,6 +45,40 @@ public class WeatherForecastRepository {
     private SharedPreferences sharedPref;
     private XMLWeatherForecastParser webContent;
     private MutableLiveData<Location> mLocation = new MutableLiveData<>();
+    private MutableLiveData<StateData<Integer>> importDataFromTheWebResponseMutableLiveData = new MutableLiveData<>();
+
+    public class StateData<T> {
+
+        @Nullable
+        private T data;
+
+        @Nullable
+        private Exception exception;
+
+        public StateData(T data) {
+            this.data = data;
+        }
+
+        public StateData(Exception exception) {
+            this.exception = exception;
+        }
+
+        public T getData() {
+            return data;
+        }
+
+        public Exception getException() {
+            return exception;
+        }
+
+        public boolean isSuccess() {
+            return data != null;
+        }
+
+        public boolean isError() {
+            return exception != null;
+        }
+    }
 
     public WeatherForecastRepository(Application application) {
         db = WeatherForecastDatabase.getInstance(application);
@@ -146,15 +181,24 @@ public class WeatherForecastRepository {
         WeatherForecastDatabase.databaseWriteExecutor.execute(() -> {
             List<XMLWeatherForecastParser.Entry> data = webContent.getWeatherInformationFromTheWeb();
             if(data != null) {
+                int count = 0;
                 for(XMLWeatherForecastParser.Entry i : data) {
                     mLocationsDao.insert(i.location);
+                    count++;
                     for(WeatherForecast j : i.forecast) {
                         j.locationId = i.location.id;
                         mWeatherForecastDao.insert(j);
                     }
                 }
+                importDataFromTheWebResponseMutableLiveData.postValue(new StateData<>(count));
+            } else {
+                importDataFromTheWebResponseMutableLiveData.postValue(new StateData<>(new Exception("failed to import data from the web")));
             }
         });
+    }
+
+    public LiveData<StateData<Integer>> importDataFromTheWebResponse() {
+        return importDataFromTheWebResponseMutableLiveData;
     }
 
     public void clearAllData() {

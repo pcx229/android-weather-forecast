@@ -1,7 +1,5 @@
 package com.weather;
 
-import android.Manifest;
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,6 +8,7 @@ import android.os.Bundle;
 import android.os.FileUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -28,14 +27,13 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.weather.data.WeatherForecastViewModel;
+import com.weather.data.ImportActivityViewModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Objects;
 
 public class ImportActivity extends AppCompatActivity {
@@ -45,13 +43,15 @@ public class ImportActivity extends AppCompatActivity {
     @StringRes
     final int[] TAB_TITLES = new int[]{R.string.tab_text_locations_activity_import, R.string.tab_text_weather_forecast_activity_import};
 
-    private WeatherForecastViewModel mWeatherForecastViewModel;
+    private ImportActivityViewModel mImportActivityViewModel;
+
+    private Snackbar loadingDataFromTheWebProgressSnackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mWeatherForecastViewModel = new ViewModelProvider(this).get(WeatherForecastViewModel.class);
+        mImportActivityViewModel = new ViewModelProvider(this).get(ImportActivityViewModel.class);
 
         setContentView(R.layout.activity_import);
         ViewPager2 viewPager = findViewById(R.id.view_pager);
@@ -84,6 +84,15 @@ public class ImportActivity extends AppCompatActivity {
         new TabLayoutMediator(tabs, viewPager,
                 (tab, position) -> tab.setText(TAB_TITLES[position])
         ).attach();
+        loadingDataFromTheWebProgressSnackbar = Snackbar.make(findViewById(android.R.id.content), "wait while loading weather forecast data from the web....", Snackbar.LENGTH_INDEFINITE);
+        mImportActivityViewModel.importDataFromTheWebResponse().observe(this, integerStateData -> {
+            loadingDataFromTheWebProgressSnackbar.dismiss();
+            if(integerStateData.isSuccess()) {
+                Toast.makeText(this, "imported " + integerStateData.getData() + " locations records", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "failed to get data from the web", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void addLocation(View view) {
@@ -101,8 +110,8 @@ public class ImportActivity extends AppCompatActivity {
                 .setMessage("Are you sure you want to import from ims.gov.il ?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        Snackbar.make(findViewById(android.R.id.content), "wait while loading weather forecast data from the web....", Snackbar.LENGTH_LONG).show();
-                        mWeatherForecastViewModel.importDataFromTheWeb();
+                        loadingDataFromTheWebProgressSnackbar.show();
+                        mImportActivityViewModel.importDataFromTheWeb();
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)
@@ -114,7 +123,7 @@ public class ImportActivity extends AppCompatActivity {
                 .setMessage("Are you sure you want to delete all data entries(both locations and forecasts)?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        mWeatherForecastViewModel.clearAllData();
+                        mImportActivityViewModel.clearAllData();
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)
@@ -159,7 +168,7 @@ public class ImportActivity extends AppCompatActivity {
                             FileUtils.copy(fis, fos);
                             fos.close();
                             fis.close();
-                            mWeatherForecastViewModel.importFromDBFile(cash_database);
+                            mImportActivityViewModel.importFromDBFile(cash_database);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

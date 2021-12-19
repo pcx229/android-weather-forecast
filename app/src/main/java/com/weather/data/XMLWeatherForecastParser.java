@@ -15,6 +15,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -74,7 +76,7 @@ class XMLWeatherForecastParser {
             in.close();
             xmlWeatherForecastOutput.delete();
             return data;
-        } catch (XmlPullParserException | IOException | ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -266,13 +268,21 @@ class XMLWeatherForecastParser {
         }
     }
 
-    private static void downloadFile(String url, File outputFile) {
+    private static void downloadFile(String url, File outputFile) throws Exception {
+        DataInputStream wis = null;
+        DataOutputStream fos = null;
+        HttpURLConnection conn = null;
         try {
             URL u = new URL(url);
-            URLConnection conn = u.openConnection();
+            conn = (HttpURLConnection) u.openConnection();
+            conn.connect();
 
-            DataInputStream wis = new DataInputStream(u.openStream());
-            DataOutputStream fos = new DataOutputStream(new FileOutputStream(outputFile));
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new Exception("Bad HTTP response");
+            }
+
+            wis = new DataInputStream(u.openStream());
+            fos = new DataOutputStream(new FileOutputStream(outputFile));
 
             byte[] buffer = new byte[1024];
             int count = 0;
@@ -280,13 +290,19 @@ class XMLWeatherForecastParser {
                 fos.write(buffer, 0, count);
             }
             fos.flush();
-            fos.close();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            try {
+                if (fos != null)
+                    fos.close();
+                if (wis != null)
+                    wis.close();
+            } catch (IOException ignored) {
+            }
 
-            wis.close();
-        } catch(FileNotFoundException e) {
-            Log.e("Error: ", e.getMessage());
-        } catch (IOException e) {
-            Log.e("Error: ", e.getMessage());
+            if (conn != null)
+                conn.disconnect();
         }
     }
 }
