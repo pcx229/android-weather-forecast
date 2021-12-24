@@ -9,4 +9,8 @@ there is an option to pull weather information form the Israel Meteorological Se
 ### ScreenShot  
 
 ![weather forecast app](https://raw.githubusercontent.com/pcx229/android-weather-forecast/master/screenshot.png)
+
+ ### Credit  
+ 
+ background image taken from  [unsplash](https://unsplash.com/photos/1mmZEQJLv0k)  
  
