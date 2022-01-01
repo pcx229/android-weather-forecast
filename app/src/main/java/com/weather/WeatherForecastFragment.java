@@ -7,8 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
@@ -16,21 +16,28 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.weather.data.WeatherForecast;
 import com.weather.data.ImportActivityViewModel;
+import com.weather.data.WeatherForecast;
 import com.weather.databinding.FragmentWeatherForecastItemBinding;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WeatherForecastFragment extends Fragment {
 
     public static final String TAG = "WEATHER_FORECAST";
+
+    private ImageButton searchFilterButton;
 
     private List<WeatherForecast> weatherForecasts;
     private ListView weatherForecastListView;
     private ArrayAdapter<WeatherForecast> weatherForecastListAdapter;
 
     private ImportActivityViewModel mImportActivityViewModel;
+
+    private WeatherForecastFilterDialog filterDialog;
+    private Map<String, String> filterParams = new HashMap<>();
 
     public WeatherForecastFragment() {
 
@@ -77,17 +84,13 @@ public class WeatherForecastFragment extends Fragment {
 
         };
         weatherForecastListView.setAdapter(weatherForecastListAdapter);
-        weatherForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)
-            {
-                Intent intent = new Intent(getActivity(), EditWeatherForecast.class);
-                intent.putExtra("id", weatherForecasts.get(position).id);
-                startActivity(intent);
-            }
+        weatherForecastListView.setOnItemClickListener((arg0, arg1, position, arg3) -> {
+            Intent intent = new Intent(getActivity(), EditWeatherForecast.class);
+            intent.putExtra("id", weatherForecasts.get(position).id);
+            startActivity(intent);
         });
 
-        mImportActivityViewModel.getAllWeatherForecasts().observe(getActivity(), weatherForecasts -> {
+        mImportActivityViewModel.getFilteredWeatherForecasts().observe(getActivity(), weatherForecasts -> {
             if(weatherForecasts != null) {
                 Log.d(TAG, "number of weather forecasts " + weatherForecasts.size());
             } else {
@@ -106,6 +109,21 @@ public class WeatherForecastFragment extends Fragment {
             getView().requestLayout();
         });
 
+        filterDialog = new WeatherForecastFilterDialog(getActivity());
+        filterDialog.setOnFilterListener(filter -> {
+            this.filterParams = filter;
+            mImportActivityViewModel.setFilterWeatherForecasts(filter);
+        });
+
+        searchFilterButton = (ImageButton) view.findViewById(R.id.SearchFilterButton);
+        searchFilterButton.setOnClickListener(v -> filterDialog.show());
+
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mImportActivityViewModel.setFilterWeatherForecasts(filterParams);
     }
 }

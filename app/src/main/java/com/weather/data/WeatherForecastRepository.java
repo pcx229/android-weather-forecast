@@ -2,38 +2,19 @@ package com.weather.data;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Environment;
-import android.util.Log;
-import android.util.Xml;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import com.weather.Common;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +27,7 @@ public class WeatherForecastRepository {
     private XMLWeatherForecastParser webContent;
     private MutableLiveData<Location> mLocation = new MutableLiveData<>();
     private MutableLiveData<StateData<Integer>> importDataFromTheWebResponseMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<Map<String, String>> searchFilter = new MutableLiveData<>();
 
     public class StateData<T> {
 
@@ -143,12 +125,19 @@ public class WeatherForecastRepository {
         });
     }
 
+    private Date getCurrentTimeInMilliseconds() {
+        //Calendar rightNow = Calendar.getInstance();
+        //long offset = rightNow.get(Calendar.ZONE_OFFSET) + rightNow.get(Calendar.DST_OFFSET);
+        //return new Date(rightNow.getTimeInMillis() + offset);
+        return new Date(System.currentTimeMillis());
+    }
+
     public LiveData<WeatherForecast> getDailyWeatherForecast() {
-        return Transformations.switchMap(mLocation, location -> location != null ? mWeatherForecastDao.getDaily(location.id) : null);
+        return Transformations.switchMap(mLocation, location -> location != null ? mWeatherForecastDao.getDaily(getCurrentTimeInMilliseconds(), location.id) : null);
     }
 
     public LiveData<List<WeatherForecast>> getWeeklyWeatherForecast() {
-        return Transformations.switchMap(mLocation, location -> location != null ? mWeatherForecastDao.getWeekly(location.id) : null);
+        return Transformations.switchMap(mLocation, location -> location != null ? mWeatherForecastDao.getWeekly(getCurrentTimeInMilliseconds(), location.id) : null);
     }
 
     public LiveData<List<WeatherForecast>> getAllWeatherForecasts() {
@@ -189,6 +178,8 @@ public class WeatherForecastRepository {
                         j.locationId = i.location.id;
                         mWeatherForecastDao.insert(j);
                     }
+                    List<WeatherForecast> weeklyWeatherForecasts = WeatherForecastHourlyToDailyConverter.getDailyForecastFromHourly(i.forecast);
+                    mWeatherForecastDao.insert(weeklyWeatherForecasts.toArray(new WeatherForecast[weeklyWeatherForecasts.size()]));
                 }
                 importDataFromTheWebResponseMutableLiveData.postValue(new StateData<>(count));
             } else {
@@ -235,5 +226,42 @@ public class WeatherForecastRepository {
             temp_db.close();
             database.delete();
         });
+    }
+
+    public void setFilterWeatherForecasts(Map<String, String> filter) {
+        searchFilter.postValue(filter);
+    }
+
+    public LiveData<List<WeatherForecast>> getFilteredWeatherForecasts() {
+        return Transformations.switchMap(searchFilter, filter -> {
+                String locationId = filter.get("locationId");
+                if(locationId == null || locationId.equals("")) {
+                    locationId = "%";
+                }
+                String after = filter.get("after");
+                if(after == null || locationId.equals("")) {
+                    after = "0";
+                } else {
+                    Date date = Common.DateConverter.stringToDate(after);
+                    if(date == null) {
+                        after = "0";
+                    } else {
+                        after = Long.toString(date.getTime());
+                    }
+                }
+                String before = filter.get("before");
+                if(before == null || locationId.equals("")) {
+                    before = "9999999999999999999999999";
+                } else {
+                    Date date = Common.DateConverter.stringToDate(before);
+                    if(date == null) {
+                        before = "9999999999999999999999999";
+                    } else {
+                        before = Long.toString(date.getTime());
+                    }
+                }
+                return mWeatherForecastDao.getFiltered(locationId, after, before);
+            }
+        );
     }
 }

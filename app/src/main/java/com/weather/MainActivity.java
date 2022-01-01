@@ -31,7 +31,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.weather.data.Location;
 import com.weather.data.MainActivityViewModel;
 import com.weather.data.WeatherForecast;
-import com.weather.data.MainActivityViewModel;
 import com.weather.databinding.ActivityMainBinding;
 import com.weather.databinding.WeeklyForecastListItemBinding;
 

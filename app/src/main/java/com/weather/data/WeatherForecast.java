@@ -43,4 +43,9 @@ public class WeatherForecast {
     public WeatherForecast() {
         this(0, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
+
+    @Ignore
+    public WeatherForecast(WeatherForecast w) {
+        this(0, new Date(w.fromForecastTime.getTime()), new Date(w.toForecastTime.getTime()), w.temperature, w.maxTemperature, w.minTemperature, w.humidity, w.maxHumidity, w.minHumidity, w.windSpeed, w.windDirection, w.rainFall, w.weatherCode);
+    }
 }

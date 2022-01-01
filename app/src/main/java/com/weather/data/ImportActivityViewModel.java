@@ -1,15 +1,13 @@
 package com.weather.data;
 
 import android.app.Application;
-import android.content.Context;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.weather.ImportActivity;
-
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 public class ImportActivityViewModel extends AndroidViewModel {
 
@@ -74,5 +72,13 @@ public class ImportActivityViewModel extends AndroidViewModel {
 
     public void importFromDBFile(File database) {
         mRepository.importFromDBFile(database);
+    }
+
+    public void setFilterWeatherForecasts(Map<String, String> filter) {
+        mRepository.setFilterWeatherForecasts(filter);
+    }
+
+    public LiveData<List<WeatherForecast>> getFilteredWeatherForecasts() {
+        return mRepository.getFilteredWeatherForecasts();
     }
 }

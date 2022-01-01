@@ -1,7 +1,5 @@
 package com.weather;
 
-import android.widget.EditText;
-
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.InverseMethod;
 
